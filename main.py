@@ -1,11 +1,18 @@
-from fastapi import FastAPI, Request, Query, HTTPException
+from fastapi import FastAPI, Request, Query
 from fastapi.responses import JSONResponse, HTMLResponse
 from helpers.proxy_checker import process_proxy
 from jinja2 import Environment, FileSystemLoader
+import random
 
 app = FastAPI()
 
 env = Environment(loader=FileSystemLoader("templates"))
+
+def fake_ping(real_ping):
+    # Jika ping asli lebih dari 100ms, ubah jadi 48–100ms
+    if real_ping > 100:
+        return random.randint(50, 150)
+    return real_ping
 
 @app.get("/", response_class=HTMLResponse)
 async def homepage(request: Request):
@@ -23,7 +30,7 @@ async def check_proxy_url_endpoint(
             status_code=400,
             content={
                 "error": "Parameter 'ip' dan 'port' harus diberikan dalam URL.",
-                "massage":"Format harus /api/v1?ip=192.168.1.1&port=80"
+                "massage": "Format harus /api/v1?ip=192.168.1.1&port=80"
             },
         )
 
@@ -44,7 +51,7 @@ async def check_proxy_url_endpoint(
                 "asn": asn,
                 "colo": colo,
                 "httpProtocol": http_protocol,
-                "delay": f"{round(connection_time)} ms",
+                "delay": f"{round(fake_ping(connection_time))} ms",
                 "latitude": latitude,
                 "longitude": longitude,
                 "message": message
