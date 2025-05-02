@@ -90,4 +90,3 @@ def process_proxy(ip, port):
         dead_message = f"Cloudflare Proxy Dead: {ip}:{port}"
         print(dead_message)
         return False, dead_message, "Unknown", "Unknown", "Unknown", None, "Unknown", "Unknown", 0, "Unknown", "Unknown", "Unknown"
-
